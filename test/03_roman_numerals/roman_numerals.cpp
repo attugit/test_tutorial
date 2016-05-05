@@ -48,4 +48,13 @@ TEST_F(roman_test, useXCToRepresentNinetyAndCToRepresentOneHundred) {
   EXPECT_EQ(to_roman(139), "CXXXIX");
   EXPECT_EQ(to_roman(149), "CXLIX");
 }
+
+TEST_F(roman_test, useCDToRepresentFourHundredAndDToRepresentFiveHundred) {
+  EXPECT_EQ(to_roman(399), "CCCXCIX");
+  EXPECT_EQ(to_roman(400), "CD");
+  EXPECT_EQ(to_roman(499), "CDXCIX");
+  EXPECT_EQ(to_roman(500), "D");
+  EXPECT_EQ(to_roman(549), "DXLIX");
+  EXPECT_EQ(to_roman(588), "DLXXXVIII");
+}
 }
