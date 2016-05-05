@@ -4,6 +4,24 @@ language: cpp
 
 matrix:
   include:
+    - env: COMPILER=g++-4.7
+      addons: &gcc47
+        apt:
+          packages:
+            - g++-4.7
+            - libboost-dev
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - env: COMPILER=g++-4.9
+      addons: &gcc49
+        apt:
+          packages:
+            - g++-4.9
+            - libboost-dev
+          sources:
+            - ubuntu-toolchain-r-test
+
     - env: COMPILER=g++-5
       addons: &gcc5
         apt:
