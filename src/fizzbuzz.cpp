@@ -4,7 +4,9 @@ std::vector<std::string> xcode::fizzbuzz(std::size_t n) {
   std::vector<std::string> ret{};
   auto idx = 0u;
   while (++idx, n-- > 0) {
-    if (idx % 3u == 0u)
+    if (idx % 15u == 0)
+      ret.push_back("fizzbuzz");
+    else if (idx % 3u == 0u)
       ret.push_back("fizz");
     else if (idx % 5u == 0u)
       ret.push_back("buzz");
