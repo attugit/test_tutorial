@@ -10,7 +10,6 @@ matrix:
           packages:
             - g++-5
             - libboost-dev
-            - valgrind
           sources:
             - ubuntu-toolchain-r-test
 
@@ -20,5 +19,5 @@ before_install:
 
 script:
   - rm -rf build;
-  - CXX=$COMPILER ./waf distclean configure build --testcmd="valgrind --error-exitcode=1 %s" --alltests -j1
-  - CXX=$COMPILER ./waf distclean configure build_release --testcmd="valgrind --error-exitcode=1 %s" --alltests -j1
+  - CXX=$COMPILER ./waf distclean configure build --alltests -j1
+  - CXX=$COMPILER ./waf distclean configure build_release --alltests -j1
