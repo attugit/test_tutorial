@@ -1,0 +1,36 @@
+sudo: false
+cache: apt
+language: cpp
+
+matrix:
+  include:
+    - env: COMPILER=g++-5
+      addons: &gcc5
+        apt:
+          packages:
+            - g++-5
+            - libboost1.55-dev
+            - valgrind
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - env: COMPILER=clang++-3.8
+      addons: &clang38
+        apt:
+          sources:
+            - llvm-toolchain-precise-3.8
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-3.8
+            - g++-5
+            - libboost1.55-dev
+            - valgrind
+
+before_install:
+  - export CXX=$COMPILER
+  - which $CXX
+
+script:
+  - rm -rf build;
+  - CXX=$COMPILER ./waf distclean configure build --testcmd="valgrind --error-exitcode=1 %s" --alltests -j1
+  - CXX=$COMPILER ./waf distclean configure build_release --testcmd="valgrind --error-exitcode=1 %s" --alltests -j1
