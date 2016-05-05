@@ -53,7 +53,7 @@ from waflib.Tools import waf_unit_test
 def build(bld):
   if not bld.variant:
     bld.fatal('try "waf --help"')
-  bld.env.INCLUDES += ['src']
+  bld.env.INCLUDES += ['.']
   bld(
     source       = bld.path.ant_glob(['src/**/*.cpp']),
     target       = 'SOURCE',
