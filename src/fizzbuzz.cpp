@@ -2,6 +2,7 @@
 
 std::vector<std::string> xcode::fizzbuzz(std::size_t n) {
   std::vector<std::string> ret{};
+  ret.reserve(n);
   auto idx = 0u;
   while (++idx, n-- > 0) {
     if (idx % 15u == 0)
