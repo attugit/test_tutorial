@@ -38,4 +38,14 @@ TEST_F(roman_test, useXLToRepresentFourtyAndLToRepresentFifty) {
   EXPECT_EQ(to_roman(50), "L");
   EXPECT_EQ(to_roman(54), "LIV");
 }
+
+TEST_F(roman_test, useXCToRepresentNinetyAndCToRepresentOneHundred) {
+  EXPECT_EQ(to_roman(89), "LXXXIX");
+  EXPECT_EQ(to_roman(90), "XC");
+  EXPECT_EQ(to_roman(99), "XCIX");
+  EXPECT_EQ(to_roman(100), "C");
+  EXPECT_EQ(to_roman(101), "CI");
+  EXPECT_EQ(to_roman(139), "CXXXIX");
+  EXPECT_EQ(to_roman(149), "CXLIX");
+}
 }

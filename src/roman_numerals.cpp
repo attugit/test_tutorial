@@ -9,5 +9,7 @@ std::string xcode::to_roman(std::size_t n) {
   boost::replace_all(ret, "VIV", "IX");
   boost::replace_all(ret, "XXXXX", "L");
   boost::replace_all(ret, "XXXX", "XL");
+  boost::replace_all(ret, "LL", "C");
+  boost::replace_all(ret, "LXL", "XC");
   return ret;
 }
