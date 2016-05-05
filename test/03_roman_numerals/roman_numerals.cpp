@@ -11,5 +11,11 @@ TEST_F(roman_test, returnsIsForNumbersLessThenFour) {
   EXPECT_EQ(to_roman(3), "III");
 }
 
-TEST_F(roman_test, returnsVForFive) { EXPECT_EQ(to_roman(5), "V"); }
+TEST_F(roman_test, useIVToRepresentFourAndVToRepresentFive) {
+  EXPECT_EQ(to_roman(4), "IV");
+  EXPECT_EQ(to_roman(5), "V");
+  EXPECT_EQ(to_roman(6), "VI");
+  EXPECT_EQ(to_roman(7), "VII");
+  EXPECT_EQ(to_roman(8), "VIII");
+}
 }
