@@ -6,6 +6,8 @@ std::vector<std::string> xcode::fizzbuzz(std::size_t n) {
   while (++idx, n-- > 0) {
     if (idx % 3u == 0u)
       ret.push_back("fizz");
+    else if (idx % 5u == 0u)
+      ret.push_back("buzz");
     else
       ret.push_back(std::to_string(idx));
   }

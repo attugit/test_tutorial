@@ -41,4 +41,26 @@ TEST_F(fizzbuzz_test, returnsFizzWhenNumberDivisibleByThree) {
     EXPECT_EQ(ret[3], "4");
   }
 }
+
+TEST_F(fizzbuzz_test, returnsBuzzWhenNumberDivisibleByFive) {
+  {
+    auto ret = fizzbuzz(5);
+    ASSERT_EQ(ret.size(), 5u);
+    EXPECT_EQ(ret[0], "1");
+    EXPECT_EQ(ret[1], "2");
+    EXPECT_EQ(ret[2], "fizz");
+    EXPECT_EQ(ret[3], "4");
+    EXPECT_EQ(ret[4], "buzz");
+  }
+  {
+    auto ret = fizzbuzz(6);
+    ASSERT_EQ(ret.size(), 6u);
+    EXPECT_EQ(ret[0], "1");
+    EXPECT_EQ(ret[1], "2");
+    EXPECT_EQ(ret[2], "fizz");
+    EXPECT_EQ(ret[3], "4");
+    EXPECT_EQ(ret[4], "buzz");
+    EXPECT_EQ(ret[5], "fizz");
+  }
+}
 }
