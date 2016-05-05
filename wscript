@@ -9,6 +9,9 @@ out = 'build'
 flags = [
   '-std=c++11',
   '-Wall',
+  '-Wextra',
+  '-Wshadow',
+  '-Wunused',
   '-pedantic',
   '-pedantic-errors',
   '-Werror'
