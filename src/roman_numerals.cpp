@@ -13,5 +13,7 @@ std::string xcode::to_roman(std::size_t n) {
   boost::replace_all(ret, "LXL", "XC");
   boost::replace_all(ret, "CCCCC", "D");
   boost::replace_all(ret, "CCCC", "CD");
+  boost::replace_all(ret, "DD", "M");
+  boost::replace_all(ret, "DCD", "CM");
   return ret;
 }
