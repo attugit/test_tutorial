@@ -9,4 +9,18 @@ TEST_F(fizzbuzz_test, returnsNothingForZero) {
   auto ret = fizzbuzz(0);
   EXPECT_TRUE(ret.empty());
 }
+
+TEST_F(fizzbuzz_test, returnsStringRepresentationOfNumbersUpToThree) {
+  {
+    auto ret = fizzbuzz(1);
+    ASSERT_EQ(ret.size(), 1u);
+    EXPECT_EQ(ret[0], "1");
+  }
+  {
+    auto ret = fizzbuzz(2);
+    ASSERT_EQ(ret.size(), 2u);
+    EXPECT_EQ(ret[0], "1");
+    EXPECT_EQ(ret[1], "2");
+  }
+}
 }
