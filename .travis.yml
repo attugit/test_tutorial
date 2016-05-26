@@ -39,7 +39,6 @@ before_install:
   - which $CXX
   - virtualenv bnf
   - source bnf/bin/activate
-  - pip install pyparsing
   - deactivate
 
 script:
