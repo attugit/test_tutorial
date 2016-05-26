@@ -10,6 +10,7 @@ matrix:
           packages:
             - g++-4.7
             - libboost-dev
+            - python-virtualenv
           sources:
             - ubuntu-toolchain-r-test
 
@@ -19,6 +20,7 @@ matrix:
           packages:
             - g++-4.9
             - libboost-dev
+            - python-virtualenv
           sources:
             - ubuntu-toolchain-r-test
 
@@ -28,14 +30,21 @@ matrix:
           packages:
             - g++-5
             - libboost-dev
+            - python-virtualenv
           sources:
             - ubuntu-toolchain-r-test
 
 before_install:
   - export CXX=$COMPILER
   - which $CXX
+  - virtualenv bnf
+  - source bnf/bin/activate
+  - pip install pyparsing
+  - deactivate
 
 script:
   - rm -rf build;
+  - source bnf/bin/activate
   - CXX=$COMPILER ./waf distclean configure build --alltests -j1
   - CXX=$COMPILER ./waf distclean configure build_release --alltests -j1
+  - deactivate
