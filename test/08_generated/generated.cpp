@@ -19,6 +19,6 @@ TEST_F(generated_test, canCallGeneratedWrapper) {
   EXPECT_FALSE(sut[0].third());
   sut[0].set_third(4.0);
   ASSERT_TRUE(sut[0].third());
-  EXPECT_EQ(sut[0].third().value(), 4.0);
+  EXPECT_EQ(*(sut[0].third()), 4.0);
 }
 }
