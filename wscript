@@ -20,6 +20,7 @@ flags = [
 def options(opt):
   opt.load('compiler_cxx')
   opt.load('boost')
+  opt.load('sproc')
   opt.load('waf_unit_test')
 
 def configure(conf):
@@ -30,6 +31,7 @@ def configure(conf):
   conf.load('compiler_cxx')
   conf.load('boost')
   conf.check_boost()
+  conf.load('sproc')
   conf.env.CXXFLAGS += flags
   for variant in ['debug', 'release', 'coverage']:
     conf.setenv('base')
@@ -56,10 +58,16 @@ from waflib.Tools import waf_unit_test
 def build(bld):
   if not bld.variant:
     bld.fatal('try "waf --help"')
-  bld.env.INCLUDES += ['.']
+  bld.env.INCLUDES += ['.', bld.bldnode.abspath()]
   bld(
     source       = bld.path.ant_glob(['src/**/*.cpp']),
     target       = 'SOURCE',
+    features     = 'cxx',
+    install_path = None,
+  )
+  bld(
+    source       = bld.path.ant_glob(['src/**/*.sproc']),
+    target       = 'GENERATED',
     features     = 'cxx',
     install_path = None,
   )
@@ -84,7 +92,7 @@ def build(bld):
         source       = bld.path.ant_glob(['test/%s/**/*.cpp'%suite]),
         target       = 'ut_' + str(suite),
         features     = 'cxx cxxprogram test',
-        use          = ['SOURCE', 'GTEST', 'GMOCK'],
+        use          = ['SOURCE', 'GENERATED', 'GTEST', 'GMOCK'],
         install_path = None,
       )
   bld.add_post_fun(waf_unit_test.summary)

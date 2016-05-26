@@ -1,0 +1,12 @@
+class Aggregate
+data First    first    int    null     const
+data Second   second   bool   not_null var
+data Third    third    double null     var
+data Fourth   fourth   string not_null const
+data Fifth    fifth    int    const    null
+data Sixth    sixth    bool   var      not_null
+data Seventh  seventh  double const    not_null
+data Eighth   eighth   string var      null
+data Ninth    ninth    int    null
+data Tenth    tenth    bool   var
+data Eleventh eleventh double 

@@ -83,7 +83,7 @@ def make_ast(context):
     tp = representation[datatype]
     if tp == 'std::string': use_string = True
     if 'null' in tuple(mode):
-      tp = 'std::experimental::optional<%s>'%tp
+      tp = 'boost::optional<%s>'%tp
       use_optional = True
     e['type'] = tp
     e['setter'] = memfn if 'var' in tuple(mode) else None
@@ -100,7 +100,7 @@ def make_header(cls, ast, use_string, use_optional):
   src += '#include <vector>\n'
   src += '#include <tuple>\n'
   if use_string: src += '#include <string>\n'
-  if use_optional: src += '#include <experimental/optional>\n'
+  if use_optional: src += '#include <boost/optional.hpp>\n'
   src += '\n'
   src += 'namespace xcode\n{\n'
   src += 'struct %s\n{\n'%cls
