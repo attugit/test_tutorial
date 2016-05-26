@@ -1,0 +1,146 @@
+#!/usr/bin/env python
+
+from optparse import OptionParser
+
+parser = OptionParser(usage='usage: %prog [options] arg')
+parser.add_option('-c', '--cpp-out', dest='cpp', help='.cpp output file', metavar='CPPOUT')
+parser.add_option('-H', '--h-out', dest='h', help='.h output file', metavar='HOUT')
+
+(options, args) = parser.parse_args()
+
+if len(args) != 1: parser.error('must pass exactly one def')
+if not options.cpp: parser.error('must pass .cpp output file')
+if not options.h: parser.error('must pass .h output file')
+
+infile = open(str(args[0]), 'r')
+
+from pyparsing import Word, Optional, OneOrMore, Group, CaselessKeyword, alphas
+
+#BNF grammar
+"""
+<class>    ::= "class" <alpha>
+<opmode>   ::= "null" | "not_null"
+<cvmode>   ::= "const" | "var"
+<mode>     ::= <opmode> & <cvmode>
+<datatype> ::= "int" | "bool" | "double" | "string"
+<type>     ::= <datatype> <mode>
+<name>     ::= <alpha> <alpha>
+<data>     ::= "data" <name> <type>
+<grammar>  ::= <class> <data>
+"""
+
+#Keywords
+class_ = CaselessKeyword('class')
+data_ = CaselessKeyword('data')
+#Builtin types
+int_ = CaselessKeyword('int')
+bool_ = CaselessKeyword('bool')
+double_ = CaselessKeyword('double')
+string_ = CaselessKeyword('string')
+#Modes
+null_ = CaselessKeyword('null')
+not_null_ = CaselessKeyword('not_null')
+const_ = CaselessKeyword('const')
+var_ = CaselessKeyword('var')
+
+cls = Group(class_ + Word(alphas))
+opmode = Optional(null_ | not_null_, default='not_null')
+cvmode = Optional(const_ | var_, default='const')
+mode = Group(opmode & cvmode)
+datatype = int_ | bool_ | double_ | string_
+tp = Group(datatype + mode)
+name = Group(Word(alphas) + Word(alphas))
+data = Group(data_ + name + tp)
+grammar = cls + Group(OneOrMore(data))
+
+ctx = grammar.parseString(infile.read())
+
+representation = {
+  'int' : 'int',
+  'bool' : 'bool',
+  'double' : 'double',
+  'string' : 'std::string' 
+}
+
+class ParsingException(BaseException):
+  pass
+
+from collections import OrderedDict
+def make_ast(context):
+  ast = OrderedDict()
+  tokens = []
+  cls, rows = tuple(context)
+  _, className = cls
+  use_optional = False
+  use_string = False
+  for _, name, t in rows:
+    enum, memfn = tuple(name)
+    e = ast[enum] = OrderedDict()
+    tokens.append(enum)
+    datatype, mode = tuple(t)
+    e['getter'] = memfn
+    tokens.append(memfn)
+    tp = representation[datatype]
+    if tp == 'std::string': use_string = True
+    if 'null' in tuple(mode):
+      tp = 'std::experimental::optional<%s>'%tp
+      use_optional = True
+    e['type'] = tp
+    e['setter'] = memfn if 'var' in tuple(mode) else None
+  if len(tokens) != len(set(tokens)):
+    raise ParsingException()
+  if set(('int', 'bool', 'double', 'string')).intersection(set(tokens)):
+    raise ParsingException()
+  return className, ast, use_string, use_optional
+
+n, ast, st, op = make_ast(ctx)
+
+def make_header(cls, ast, use_string, use_optional):
+  src = '#pragma once\n'
+  src += '#include <vector>\n'
+  src += '#include <tuple>\n'
+  if use_string: src += '#include <string>\n'
+  if use_optional: src += '#include <experimental/optional>\n'
+  src += '\n'
+  src += 'namespace xcode\n{\n'
+  src += 'struct %s\n{\n'%cls
+  src += '  enum indicies\n  {\n'
+  src += '    ' + ',\n    '.join(ast.iterkeys()) + '\n'
+  src += '  };\n'
+  src += '\n'
+  src += '  struct row\n  {\n'
+  for k, v in ast.iteritems():
+    src += '    %s const& %s() const;\n'%(v['type'], v['getter'])
+    if v['setter']:
+      src += '    void set_%s(%s const&);\n'%(v['setter'], v['type'])
+    src += '\n'
+  src += '    private:\n'
+  src += '    using data_t = std::tuple<\n'
+  src += '      ' + ',\n      '.join(x['type'] for x in ast.itervalues()) + '\n'
+  src += '    >;\n'
+  src += '    data_t data;\n'
+  src += '  };\n'
+  src += '  using table = std::vector<row>;\n'
+  src += '};\n'
+  src += '}\n'
+  return src
+
+def make_cpp(cls, ast):
+  src = '#include "%s"\n'%options.h
+  src += '\n'
+  for k, v in ast.iteritems():
+    src += '%s const& xcode::%s::row::%s() const\n{\n' %(v['type'], cls, v['getter'])
+    src += '  return std::get<%s::%s>(data);\n'%(cls, k)
+    src += '}\n'
+    src += '\n'
+    if v['setter']:
+      src += 'void xcode::%s::row::set_%s(%s const& x)\n{\n' %(cls, v['getter'], v['type'])
+      src += '  std::get<%s::%s>(data) = x;\n'%(cls, k)
+      src += '}\n'
+      src += '\n'
+  return src
+
+cpp = open(str(options.cpp), 'w')
+cpp.write(str(make_cpp(n, ast)))
+header = open(str(options.h), 'w')
+header.write(make_header(n, ast, st, op))
